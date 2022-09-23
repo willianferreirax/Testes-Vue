@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/style.css">
+  <title>Esteira - Gerente</title>
+</head>
+
+<body>
+
+    <script type="text/x-template" id="app-template">
+        <v-app>
+            <v-container fluid class="container2">
+                <v-navigation-drawer
+                    v-model="drawer2"
+                    fixed
+                    temporary
+                >
+                    <v-list-item>
+                        <v-list-item-avatar>
+                            <v-img :src="getNameImg()"></v-img>
+                        </v-list-item-avatar>
+                
+                        <v-list-item-content>
+                            <v-list-item-title>{{corretor_name.split(' ')[0]}} {{corretor_name.split(' ')[1]}}</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+            
+                    <v-divider></v-divider>
+            
+                    <v-list dense>
+                        <v-list-item
+                            v-for="item in menuItems"
+                            :key="item.title"
+                            link
+                            @click="item.click"
+                        >
+                            <v-list-item-icon>
+                                <v-icon>{{ item.icon }}</v-icon>
+                            </v-list-item-icon>
+                
+                            <v-list-item-content>
+                                <v-list-item-title>{{ item.title }}</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+
+                        <v-list-item @click="deslogar()" style="position:absolute; bottom:10px">
+                            
+                            <v-list-item-icon>
+                                <v-icon>mdi-exit-run</v-icon>
+                            </v-list-item-icon>
+                            
+                            <v-list-item-content>
+                                <v-list-item-title>Deslogar</v-list-item-title>
+                            </v-list-item-content>
+
+                        </v-list-item>
+                    </v-list>
+                </v-navigation-drawer>
+
+                <v-row class="d-flex justify-center align-center" style="flex-direction: column">
+                    <v-col style="position:fixed !important; top:0" class="mb-10">
+
+                        <v-app-bar-nav-icon @click.stop="drawer2 = !drawer2"></v-app-bar-nav-icon>
+
+                    </v-col>
+
+                    <v-col cols="9" style="background-color:#fff; border-radius:4px; flex-direction:column;margin: 0 8px;" class="d-flex justify-center align-center pa-14">
+                        
+                        <h3 class="mb-10">Consultores</h3>
+
+                        <v-row class="d-flex justify-center align-center" style="width:100%">       
+
+                            <v-col cols="8">
+                                <v-simple-table v-if="corretores.length != 0" style="width:100%">
+                                    <template v-slot:default>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-left">
+                                                    Nome
+                                                </th>
+                                                <th class="text-left">
+                                                    WebCred
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr
+                                                v-for="(corretor, index) in corretores"
+                                                :key="index"
+                                                @click.stop="viewCorretor(index)"
+                                            >
+                                                <td>{{ corretor.nome }}</td>
+                                                <td>{{ corretor.user_webcred }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </template>
+                                </v-simple-table>
+        
+                                <div v-else class="elevation-1 d-flex justify-center align-center pa-10">
+                                    Não há consultores na equipe
+                                </div>
+                            </v-col>
+
+                        </v-row>
+                                    
+                    </v-col>
+                </v-row>
+
+                <v-dialog
+                    v-model="dialog"
+                    persistent
+                    max-width="80%"
+                    v-if="corretores.length != 0"
+                >
+                    <v-card class="text-center">
+
+                        <v-card-title class="d-flex justify-center align-center">
+                            {{corretores[selectedCorretor].nome}}
+                        </v-card-title>
+                        <br>
+                        
+                        <v-container>
+                            <v-row class="d-flex justify-center align-center">
+                                <v-col cols="10" >
+                                    <v-simple-table style="width:100%">
+                                        <template v-slot:default>
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-left">
+                                                        Nome
+                                                    </th>
+                                                    <th class="text-left">
+                                                        Cpf
+                                                    </th>
+                                                    <th class="text-left">
+                                                        Telefone
+                                                    </th>
+                                                    <th class="text-left">
+                                                        Data
+                                                    </th>
+                                                    <th class="text-center">
+                                                        Ações
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr
+                                                    v-for="(contato, index) in corretores[selectedCorretor].contatos"
+                                                    :key="index"
+                                                >
+                                                    <td>{{ contato.nome }}</td>
+                                                    <td>{{ contato.cpf }}</td>
+                                                    <td>{{ contato.telefone }}</td>
+                                                    <td>{{ contato.data.split(' ')[0].split('-').reverse().join('/') }} {{ contato.data.split(' ')[1] }}</td>
+                                                    <td class="text-center d-flex align-center">
+                                                           
+                                                        <v-btn @click="" small class="mx-2" @click="abrirModalTransferir(contato.relacao_id, contato.hash, index)">
+                                                            Transferir
+                                                        </v-btn>
+
+                                                        <v-btn @click="finalizar(contato.hash, corretores[selectedCorretor].corretor_id,index)" small>
+                                                            Encerrar
+                                                        </v-btn>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </template>
+                                    </v-simple-table>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+        
+                            <v-btn
+                              color="#11072c"
+                              @click="dialog = false"
+                            >
+                              Fechar
+                            </v-btn>
+                        </v-card-actions>
+
+                    </v-card>
+                    
+                </v-dialog>
+
+                <v-dialog
+                    v-model="dialogTransfer"
+                    persistent
+                    max-width="80%"
+                    v-if="corretores.length != 0"
+                >
+                    <v-card class="text-center">
+                        <v-card-title class="d-flex justify-center align-center">
+                            {{corretores[selectedCorretor].nome}}
+                        </v-card-title>
+                        <br>
+                        
+                        <v-container>
+                            <v-row class="d-flex justify-center align-center">
+                                <v-col cols="10" >
+                                    <v-select
+                                        style="width:50%; margin-left: auto; margin-right:auto"
+                                        :items="itemsCorretores"
+                                        label="Corretores"
+                                        v-model="transferSelect"
+                                    ></v-select>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+
+                            <v-btn
+                              color="#11072c"
+                              @click="transferir()"
+                            >
+                              Transferir
+                            </v-btn>
+        
+                            <v-btn
+                              color="#11072c"
+                              @click="dialogTransfer = false"
+                            >
+                              Fechar
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+
+            </v-container>
+        </v-app>
+    </script>
+
+    <div id="app"></div>
+
+    <script src="vue.js"></script>
+    <script src="vuetify.js"></script>
+
+    <script>
+
+        const App = {
+            template: '#app-template',
+
+            data: () => ({
+                drawer2: null,
+
+                menuItems: [
+                    { title: 'Meus consultores', icon: 'mdi-view-dashboard', click:'' },
+                    { title: 'Digitar novo', icon: 'mdi-forum', click: digitar=>{window.location.href = './'} },
+                    { title: 'Todas as propostas', icon: 'mdi-forum', click: '' },
+                ],
+
+                dialog: null,
+                dialogTransfer: null,
+
+                transferSelect: null, //novo corretor selecionado
+                transferRelacao_id: null, //relacao clienteXcorretor a ser transferido
+                transferHash: null, // hash do cliente a ser transferido
+                transferIndex: null, // index do cliente no array de contatos do corretores[] (corretores[].contatos[]) 
+                itemsCorretores: [],
+
+                cpf_corretor: null,
+                corretor_id: null,
+                group_id: null,
+                profile_id: null,
+                corretor_name: null,
+
+                corretores: [],
+
+                selectedCorretor: 0 // index do corretores[] que foi selecionado
+
+            }),
+
+            methods: {
+                deslogar(){
+                    localStorage.clear();
+                    window.location.href = "./request/logout.php"
+                },
+                
+                getNameImg(){
+                    let name = this.corretor_name.split(' ');
+
+                    return "https://via.placeholder.com/80x80/11072C/FFFFFF?text="+name[0].charAt(0)+""+name[1].charAt(0)
+                },
+
+                async viewCorretor(id){
+
+                    this.selectedCorretor = id
+
+                    let corretor_id = this.corretores[id].corretor_id;
+
+                    let retorno = await this.getContatos(corretor_id);
+
+                    if(retorno.status == true){
+                        this.corretores[id].contatos = [];
+                        this.corretores[id].contatos = retorno.contatos;
+                    }
+
+                    this.dialog = true;
+                },
+
+                abrirModalTransferir(relacao_id, hash){
+
+                    this.transferRelacao_id = relacao_id;
+                    this.transferHash = hash
+
+                    this.dialogTransfer = true;
+                },
+
+                digitarNovo(){
+                    window.location.href = "./";
+                },
+            
+                deslogar(){
+                    localStorage.clear();
+                    window.location.href = "./login.php"
+                },
+
+                async finalizar(hash,corretor_id,index){
+
+                    let confirmA = confirm("Deseja realmente encerrar ?")
+
+                    if(!confirmA){
+                        return;
+                    }
+
+                    let headers = new Headers({
+                        "Content-Type": "application/json; charset=UTF-8",
+                    });
+
+                    let body = JSON.stringify({
+                        hash: hash,
+                        idCorretor: corretor_id
+                    })
+
+                    let config = {
+                        method: 'POST',
+                        body: body,
+                        headers: headers
+                    };
+
+                    let response = await this.fetchAPI('request/finalizar.php', config);
+
+                    let data = response.data;
+
+                    if(data.status == true){
+
+                        this.corretores[this.selectedCorretor].contatos.splice(index,1)
+                        return true;
+                    }
+
+                    return false;
+                    
+                },
+            
+                click(cpf,telefone){
+                    window.location.href = './?cpf='+cpf+'&telefone='+telefone;
+                },
+
+                async transferir(){
+                    let headers = new Headers({
+                        "Content-Type": "application/json; charset=UTF-8",
+                    });
+
+                    let body = JSON.stringify({
+                        idRelacao: this.transferRelacao_id,
+                        idCliente: this.transferHash,
+                        idCorretorAnt: this.corretores[this.selectedCorretor].corretor_id,
+                        idCorretorNovo: this.transferSelect 
+                    })
+
+                    let config = {
+                        method: 'POST',
+                        body: body,
+                        headers: headers
+                    };
+                    
+                    let response = await this.fetchAPI("request/transferir_cliente.php", config);
+                    
+                    this.corretores[this.selectedCorretor].contatos.splice(this.transferIndex,1); // retira o cliente transferido do corretor antigo
+                    //inserir ele no array do novo?
+
+                    this.transferSelect = null; //limpa
+                    this.transferContato = null; //limpa
+                    this.transferRelacao_id = null; //limpa
+                    this.transferIndex = null; //limpa
+
+                    this.dialogTransfer = null;// fecha modal
+
+                },
+
+            },
+
+            async created(){
+               
+                
+            }
+
+        }
+
+        new Vue({
+            vuetify: new Vuetify(),
+            render: h => h(App)
+        }).$mount('#app')
+
+    </script>
+    
+</body>
+
+</html>

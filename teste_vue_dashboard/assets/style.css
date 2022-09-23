@@ -1,0 +1,39 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.v-btn {
+  background-color: #3b3746 !important;
+  color: #fff !important;
+}
+
+.v-btn:hover {
+  background-color: #11072c !important;
+}
+
+.col-3{
+  flex: 0 0 30%;
+  max-width: 30%;
+}
+
+.col-5{
+  flex: 0 0 48%;
+  max-width: 48%;
+}
+
+.container2 {
+  width: 100%;
+  min-height: 100vh;
+  background: #9053c7;
+  background: -webkit-linear-gradient(-135deg, #3b3746, #11072c);
+  background: -o-linear-gradient(-135deg, #3b3746, #11072c);
+  background: -moz-linear-gradient(-135deg, #3b3746, #11072c);
+  background: linear-gradient(-135deg, #3b3746, #11072c);
+}

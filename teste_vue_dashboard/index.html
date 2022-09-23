@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/style.css">
+
+    <title>Plataforma Digitação</title>
+</head>
+
+<body>
+
+    <script type="text/x-template" id="app-template">
+        <v-app style="color:#fff">
+            <v-app-bar app style="box-shadow:none !important; background-color:#11072c">
+                <v-app-bar-nav-icon @click.stop="drawer2 = !drawer2" style="background-color:#11072c !important"></v-app-bar-nav-icon>
+                <v-toolbar-title style="color:#fff; font-size:15px">Digitador - Gerente</v-toolbar-title>
+                <v-spacer></v-spacer>
+
+                <v-badge 
+                    color="red" 
+                    offset-x="30"
+                    offset-y="10"
+                    overlap
+                    dot
+                >
+                    <v-icon dark class="me-5">
+                        mdi-bell
+                    </v-icon>
+                </v-badge>
+
+                <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-avatar color="#2b253c" size="32" v-on="on" v-bind="attrs">
+                        <v-icon dark>
+                          mdi-account
+                        </v-icon>
+                      </v-avatar>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        v-for="(item, index) in items"
+                        :key="index"
+                      >
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                </v-menu>
+                
+            </v-app-bar>
+
+            <v-navigation-drawer
+                v-model="drawer2"
+                temporary
+                app
+            >
+                <v-list-item>
+                    <v-list-item-avatar>
+                        <v-img :src="getNameImg()"></v-img>
+                    </v-list-item-avatar>
+            
+                    <v-list-item-content>
+                        <v-list-item-title>{{corretor_name.split(' ')[0]}} {{corretor_name.split(' ')[1]}}</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+        
+                <v-divider></v-divider>
+        
+                <v-list dense>
+                    <v-list-item
+                        v-for="item in menuItems"
+                        :key="item.title"
+                        link
+                        @click="item.click"
+                    >
+                        <v-list-item-icon>
+                            <v-icon>{{ item.icon }}</v-icon>
+                        </v-list-item-icon>
+            
+                        <v-list-item-content>
+                            <v-list-item-title>{{ item.title }}</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+
+                    <v-list-item @click="deslogar()" style="position:absolute; bottom:10px">
+                        
+                        <v-list-item-icon>
+                            <v-icon>mdi-exit-run</v-icon>
+                        </v-list-item-icon>
+                        
+                        <v-list-item-content>
+                            <v-list-item-title>Deslogar</v-list-item-title>
+                        </v-list-item-content>
+
+                    </v-list-item>
+                </v-list>
+            </v-navigation-drawer>
+            
+            <v-main>
+                <v-container fluid class="container2">
+                    <v-row class="justify-center">
+                        <v-col cols="11">
+                            <div class="text-center">
+                                nome equipe
+                            </div>
+                            <v-row class="justify-center py-8" style="height: fit-content;">
+                                <v-col cols="12" class="" style="background-color:#2b253c; border-radius: 4px; height:40vh">
+                                    Grafico vendas
+                                </v-col>
+                            </v-row>
+        
+                            <v-row class="justify-space-between py-8">
+                                <v-col cols="3" class="pa-5" style="background-color:#2b253c; height:35vh; border-radius: 4px;">
+                                    total propostas em fila
+                                </v-col>
+        
+                                <v-col cols="3" class="pa-5" style="background-color:#2b253c; height:35vh; border-radius: 4px;">
+                                    Total clientes em atendimento
+                                </v-col>
+        
+                                <v-col cols="3" class="pa-5" style="background-color:#2b253c; height:35vh; border-radius: 4px;">
+                                    
+                                </v-col>
+                            </v-row>
+        
+                            <v-row class="justify-space-between py-8">
+                                <v-col cols="5" class="pa-5" style="background-color:#2b253c; height:35vh; border-radius: 4px;">
+        
+                                </v-col>
+        
+                                <v-col cols="5" class="pa-5" style="background-color:#2b253c; height:35vh; border-radius: 4px;">
+                                    propostas digitadas
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
+                    
+                </v-container>
+            </v-main>
+        </v-app>
+    </script>
+
+    <div id="app"></div>
+
+    <script src="vue.js"></script>
+    <script src="vuetify.js"></script>
+    <script src="v-mask.min.js"></script>
+    <script src="components/index.js"></script>
+
+    <script>
+        const App = {
+            template: '#app-template',
+
+            data: () => ({
+                drawer2: null,
+                items: [
+                    {
+                        title: 'Click Me'
+                    },
+                    {
+                        title: 'Click Me'
+                    },
+                    {
+                        title: 'Click Me'
+                    },
+                    {
+                        title: 'Click Me 2'
+                    },
+                ],
+
+                menuItems: [{
+                        title: 'Meus consultores',
+                        icon: 'mdi-view-dashboard',
+                        click: ''
+                    },
+                    {
+                        title: 'Digitar novo',
+                        icon: 'mdi-forum',
+                        click: digitar => {
+                            window.location.href = './'
+                        }
+                    },
+                    {
+                        title: 'Todas as propostas da equipe',
+                        icon: 'mdi-forum',
+                        click: ''
+                    },
+                    {
+                        title: 'Minha agenda',
+                        icon: 'mdi-forum',
+                        click: ''
+                    },
+                ],
+
+                dialog: null,
+                dialogTransfer: null,
+
+                transferSelect: null, //novo corretor selecionado
+                transferRelacao_id: null, //relacao clienteXcorretor a ser transferido
+                transferHash: null, // hash do cliente a ser transferido
+                transferIndex: null, // index do cliente no array de contatos do corretores[] (corretores[].contatos[]) 
+                itemsCorretores: [],
+
+                cpf_corretor: null,
+                corretor_id: null,
+                group_id: null,
+                profile_id: null,
+                corretor_name: 'WILLIAN FERREIRA',
+
+                corretores: [],
+
+                selectedCorretor: 0 // index do corretores[] que foi selecionado
+            }),
+
+            methods: {
+                deslogar() {
+                    localStorage.clear();
+                    window.location.href = "./request/logout.php"
+                },
+
+                getNameImg() {
+                    let name = this.corretor_name.split(' ');
+
+                    return "https://via.placeholder.com/80x80/11072C/FFFFFF?text=" + name[0].charAt(0) + "" + name[
+                        1].charAt(0)
+                },
+
+                async viewCorretor(id) {
+
+                    this.selectedCorretor = id
+
+                    let corretor_id = this.corretores[id].corretor_id;
+
+                    let retorno = await this.getContatos(corretor_id);
+
+                    if (retorno.status == true) {
+                        this.corretores[id].contatos = [];
+                        this.corretores[id].contatos = retorno.contatos;
+                    }
+
+                    this.dialog = true;
+                },
+
+                abrirModalTransferir(relacao_id, hash) {
+
+                    this.transferRelacao_id = relacao_id;
+                    this.transferHash = hash
+
+                    this.dialogTransfer = true;
+                },
+
+                digitarNovo() {
+                    window.location.href = "./";
+                },
+
+                deslogar() {
+                    localStorage.clear();
+                    window.location.href = "./login.php"
+                },
+
+                async finalizar(hash, corretor_id, index) {
+
+                    let confirmA = confirm("Deseja realmente encerrar ?")
+
+                    if (!confirmA) {
+                        return;
+                    }
+
+                    let headers = new Headers({
+                        "Content-Type": "application/json; charset=UTF-8",
+                    });
+
+                    let body = JSON.stringify({
+                        hash: hash,
+                        idCorretor: corretor_id
+                    })
+
+                    let config = {
+                        method: 'POST',
+                        body: body,
+                        headers: headers
+                    };
+
+                    let response = await this.fetchAPI('request/finalizar.php', config);
+
+                    let data = response.data;
+
+                    if (data.status == true) {
+
+                        this.corretores[this.selectedCorretor].contatos.splice(index, 1)
+                        return true;
+                    }
+
+                    return false;
+
+                },
+
+                click(cpf, telefone) {
+                    window.location.href = './?cpf=' + cpf + '&telefone=' + telefone;
+                },
+
+                async transferir() {
+                    let headers = new Headers({
+                        "Content-Type": "application/json; charset=UTF-8",
+                    });
+
+                    let body = JSON.stringify({
+                        idRelacao: this.transferRelacao_id,
+                        idCliente: this.transferHash,
+                        idCorretorAnt: this.corretores[this.selectedCorretor].corretor_id,
+                        idCorretorNovo: this.transferSelect
+                    })
+
+                    let config = {
+                        method: 'POST',
+                        body: body,
+                        headers: headers
+                    };
+
+                    let response = await this.fetchAPI("request/transferir_cliente.php", config);
+
+                    this.corretores[this.selectedCorretor].contatos.splice(this.transferIndex,
+                        1); // retira o cliente transferido do corretor antigo
+                    //inserir ele no array do novo?
+
+                    this.transferSelect = null; //limpa
+                    this.transferContato = null; //limpa
+                    this.transferRelacao_id = null; //limpa
+                    this.transferIndex = null; //limpa
+
+                    this.dialogTransfer = null; // fecha modal
+
+                },
+            }
+        }
+
+        Vue.directive('mask', VueMask.VueMaskDirective);
+
+        new Vue({
+            vuetify: new Vuetify(),
+            render: h => h(App)
+        }).$mount('#app')
+    </script>
+</body>
+
+</html>
