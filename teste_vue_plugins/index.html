@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script type="text/x-template" id="app-template">
+        <div>
+            <router-link to="/">Go to Page</router-link>
+            <router-link to="/page2">Go to Page2</router-link>
+            <router-view></router-view>
+        </div>
+    </script>
+    <div id="app"></div>
+
+    <script src="vue.js"></script>
+    <script src="vuetify.js"></script>
+    <script src="vue-router.js"></script>
+
+    <script type="module">
+        import { Page } from './components/page.js';
+        import { Page2 } from './components/page2.js';
+        
+        const App = {
+            template: '#app-template',
+
+            data: () => ({
+
+            })
+        }
+
+        const routes = [
+            { path: '/', component: Page },
+            { path: '/page2', component: Page2 }
+        ]
+
+        const router = new VueRouter({
+            // base: 'willian/testeVue2/',
+            routes, // short for `routes: routes`
+        })
+
+        new Vue({
+            router,
+            vuetify: new Vuetify(),
+            render: h => h(App)
+        }).$mount('#app')
+    </script>
+</body>
+</html>
